@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আন্তর্জাতিক বিষয়াবলি কুইজ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            min-height: 100vh;
+            font-family: 'Noto Serif Bengali', serif;
+            color: #e2e8f0;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .question {
+            margin-bottom: 1.5rem;
+        }
+        .option {
+            display: block;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .option input {
+            margin-right: 0.5rem;
+        }
+        .result-container {
+            display: none;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 0.5rem;
+        }
+        .correct {
+            background: #10b981 !important;
+            color: white;
+        }
+        .incorrect {
+            background: #ef4444 !important;
+            color: white;
+        }
+        h1, h2 {
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1 class="text-3xl font-bold text-center mb-6">আর্ন্তজাতিক বিষয়াবলি</h1>
+        <h2 class="text-xl text-center mb-4">টপিকস: প্রাচীন সভ্যতা, রাজতন্ত্র, সম্রাট ও রাষ্ট্রপ্রধানের বাসভবন</h2>
+        <div id="quiz">
+            </div>
+        <button onclick="submitQuiz()" class="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">কুইজ জমা দিন</button>
+        <div id="result" class="result-container">
+            <h2 class="text-2xl font-bold">আপনার স্কোর: <span id="score"></span>/50</h2>
+            <div id="correct-answers"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "ফারাওদের প্রাচীন মিশরীয় উপাধি 'নেব তাউই'র অর্থ কী?", options: ["দুই ভূমির শাসক", "ঈশ্বরের পুত্র", "মহান রাজা", "স্বর্গীয় আলো"], correct: 0 },
+            { question: "কোন প্রাচীন সভ্যতায় 'হ্যামুরাবির আইন' তৈরি হয়েছিল?", options: ["মেসোপটেমিয়া", "মিশর", "গ্রীস", "রোম"], correct: 0 },
+            { question: "যুক্তরাজ্যের প্রধানমন্ত্রীর সরকারি বাসভবন কোনটি?", options: ["বাকিংহাম প্যালেস", "উইন্ডসর ক্যাসেল", "১০ ডাউনিং স্ট্রিট", "ক্লারেন্স হাউস"], correct: 2 },
+            { question: "রোমান সম্রাট অগাস্টাস-এর মূল নাম কী ছিল?", options: ["জুলিয়াস সিজার", "মার্ক অ্যান্টনি", "অক্টাভিয়ান", "লুসিয়াস"], correct: 2 },
+            { question: "কোন প্রাচীন সভ্যতাটি 'বইবিলের টাওয়ার অফ বাবেল'-এর সাথে সম্পর্কিত?", options: ["রোমান", "ইনকা", "মেসোপটেমিয়া", "মিশরীয়"], correct: 2 },
+            { question: "রাশিয়ার রাষ্ট্রপতির বাসভবন কোনটি?", options: ["ক্রেমলিন", "রেড স্কয়ার", "সেন্ট পিটার্সবার্গ প্যালেস", "নভয়-ওগারয়োভো"], correct: 0 },
+            { question: "ইনকা সভ্যতার রাজধানী কোন শহরটি ছিল?", options: ["তেনোচটিটলান", "কুস্কো", "মাচু পিচু", "লিমা"], correct: 1 },
+            { question: "জার্মানির রাষ্ট্রপতির বাসভবন কোনটি?", options: ["বুন্ডেস্টাগ", "বুন্দেসরাট", "বেলভিউ প্যালেস", "রাইখস্টাগ"], correct: 2 },
+            { question: "প্রাচীন গ্রীক সাম্রাজ্যের সবচেয়ে বিখ্যাত শাসক কে ছিলেন?", options: ["জুলিয়াস সিজার", "সিকান্দার", "নেপোলিয়ন", "কার্ল দ্য গ্রেট"], correct: 1 },
+            { question: "ফ্রান্সের প্রধানমন্ত্রীর বাসভবন কোনটি?", options: ["এলিসি প্যালেস", "মাতিনো প্যালেস", "ল্যুভর প্রাসাদ", "ভার্সাই প্যালেস"], correct: 1 },
+            { question: "রোমান সাম্রাজ্যের 'গ্যালিক' ভাষা কোন প্রদেশের সাথে সম্পর্কিত?", options: ["ইতালি", "স্পেন", "ফ্রান্স", "ব্রিটেন"], correct: 2 },
+            { question: "কোন সম্রাট 'আকবর' উপাধি গ্রহণ করেন?", options: ["নাসিরুদ্দিন হুমায়ুন", "আলাউদ্দিন খিলজি", "জালালউদ্দিন মোহাম্মদ", "আওরঙ্গজেব"], correct: 2 },
+            { question: "যুক্তরাষ্ট্রের ভাইস প্রেসিডেন্টের বাসভবন কোথায় অবস্থিত?", options: ["হোয়াইট হাউস", "ক্যাপিটল হিল", "নেভাল অবজারভেটরি", "পেন্টাগন"], correct: 2 },
+            { question: "'দ্যা গ্রেট ওয়াল অফ চায়না' কোন সম্রাটের আমলে শুরু হয়?", options: ["কুবলাই খান", "শি হুয়াংতি", "ইউডি", "লি শি"], correct: 1 },
+            { question: "প্রাচীন সিন্ধু উপত্যকার কোন শহরটি 'মৃতের স্তূপ' নামে পরিচিত ছিল?", options: ["হরপ্পা", "লোথাল", "কালিবাঙ্গান", "মহেনজোদারো"], correct: 3 },
+            { question: "জাপানের সম্রাটের বাসভবন কোনটি?", options: ["নারিতা প্যালেস", "টোকিও ইম্পেরিয়াল প্যালেস", "গিয়েন প্যালেস", "কিয়োটো ইম্পেরিয়াল প্যালেস"], correct: 1 },
+            { question: "অটোমান সাম্রাজ্যের সবচেয়ে দীর্ঘজীবী রাজবংশ কোনটি?", options: ["ওসমান", "মুরাদ", "আহমেদ", "মুস্তফা"], correct: 0 },
+            { question: "আয়ারল্যান্ডের রাষ্ট্রপতির বাসভবন কোনটি?", options: ["লেস্টার হাউস", "ফিনলে হাউজ", "ফিনিক্স পার্ক", "আর্দাঘ হাউজ"], correct: 2 },
+            { question: "কোন প্রাচীন সভ্যতাটি 'জলবায়ু পরিবর্তনের কারণে বিলুপ্ত হয়' বলে মনে করা হয়?", options: ["মায়া", "মিসরীয়", "রোমান", "হারাপ্পান"], correct: 0 },
+            { question: "নেদারল্যান্ডসের প্রধানমন্ত্রীর বাসভবন কোনটি?", options: ["নুর্ডিন্ড", "হেগ প্যালেস", "বিমলা প্যালেস", "আমস্টারডাম প্যালেস"], correct: 0 },
+            { question: "প্রাচীন গ্রিক রাজতন্ত্রের পতনের পর কোন শাসনব্যবস্থা প্রতিষ্ঠিত হয়েছিল?", options: ["স্বৈরশাসন", "গণতন্ত্র", "প্রজাতন্ত্র", "সামন্ততন্ত্র"], correct: 1 },
+            { question: "কানাডার প্রধানমন্ত্রীর বাসভবন কোনটি?", options: ["২ ফোরটি সেভেন স্ট্রিট", "২ ফোরটি উইলিংটন স্ট্রিট", "২৪ সাসেক্স ড্রাইভ", "রিডু হল"], correct: 2 },
+            { question: "জাপানের সম্রাটকে কী উপাধি দেওয়া হয়?", options: ["শোগুন", "মাইকো", "তেননো", "সেনসেই"], correct: 2 },
+            { question: "অস্ট্রেলিয়ার প্রধানমন্ত্রীর বাসভবন কোনটি?", options: ["ল্যাঙ্গেটন হাউস", "দ্য Lodge", "বুমেরাং হাউজ", "ক্যানবেরা গেস্ট হাউজ"], correct: 1 },
+            { question: "কোন প্রাচীন সভ্যতায় প্রথম 'হস্তলিপি' আবিষ্কৃত হয়েছিল?", options: ["মেসোপটেমিয়া", "মিশর", "চীন", "সিন্ধু উপত্যকা"], correct: 0 },
+            { question: "দক্ষিণ কোরিয়ার প্রেসিডেন্টের বাসভবন কোনটি?", options: ["ব্লু হাউস", "হোয়াইট প্যালেস", "গ্রিন হাউস", "পিয়ংইয়াং প্যালেস"], correct: 0 },
+            { question: "চীনে কোন রাজবংশের শাসনামলে 'ফরবিডেন সিটি' নির্মিত হয়েছিল?", options: ["মিং", "তাং", "হান", "কিং"], correct: 0 },
+            { question: "জার্মানির চ্যান্সেলরের সরকারি বাসভবন কোনটি?", options: ["বুন্ডেস্টাগ", "বুন্দেসচ্যান্সেলর", "শ্লোস চার্লস", "চ্যান্সেলরি"], correct: 3 },
+            { question: "কোন প্রাচীন সভ্যতাটি 'প্রথম লোহার ব্যবহার' করেছিল?", options: ["হিট্টিট", "গ্রিক", "রোমান", "মিশরীয়"], correct: 0 },
+            { question: "ইতালির প্রধানমন্ত্রীর বাসভবন কোনটি?", options: ["কুইরিনাল প্যালেস", "পালাজো চিগি", "কাসেল্লো দি ভেনেজিয়া", "পালাজো মাদামা"], correct: 1 },
+            { question: "কোন সম্রাটকে 'বিশ্বজয়ী' উপাধি দেওয়া হয়েছিল?", options: ["আশোক", "সিকান্দার", "নাদির শাহ", "হর্ষবর্ধন"], correct: 1 },
+            { question: "ফ্রান্সের প্রেসিডেন্টের বাসভবন কোনটি?", options: ["ভার্সাই প্যালেস", "ল্যুভর প্রাসাদ", "এলিসি প্যালেস", "মাতিনো প্যালেস"], correct: 2 },
+            { question: "কোনটি প্রাচীন মেসোপটেমিয়ায় 'উর্বর চন্দ্রাকৃতির অংশ' হিসেবে পরিচিত?", options: ["নাইল উপত্যকা", "টাইগ্রিস-ইউফ্রেটিস অঞ্চল", "ফার্সি উপত্যকা", "ইন্দুস উপত্যকা"], correct: 1 },
+            { question: "শ্রীলঙ্কার প্রেসিডেন্টের বাসভবন কোনটি?", options: ["প্রেসিডেন্সিয়াল প্যালেস", "টেম্পল ট্রিজ", "প্রেসিডেন্টের হাউস", "জয়াবর্ধেনেপুরা কোট্টে হাউজ"], correct: 0 },
+            { question: "কোন রাজবংশটি 'প্রথম কাগজের মুদ্রা' ব্যবহার করেছিল?", options: ["হান", "তাং", "মিং", "সং"], correct: 3 },
+            { question: "ভারতের প্রধানমন্ত্রীর বাসভবন কোনটি?", options: ["সাউথ ব্লক", "নর্থ ব্লক", "৭ লোক কল্যাণ মার্গ", "রাষ্ট্রপতি ভবন"], correct: 2 },
+            { question: "কোন প্রাচীন সভ্যতায় 'প্রথম লিখন পদ্ধতি' আবিষ্কৃত হয়?", options: ["মিশরীয়", "মেসোপটেমিয়া", "গ্রীক", "ইনকা"], correct: 1 },
+            { question: "পাকিস্তানের প্রেসিডেন্টের বাসভবন কোনটি?", options: ["আইওয়ান-এ-সদর", "প্রেসিডেন্ট প্যালেস", "প্রধানমন্ত্রী হাউজ", "জিন্নাহ হাউজ"], correct: 0 },
+            { question: "'ফার্সি সাম্রাজ্যের' প্রতিষ্ঠাতা কে ছিলেন?", options: ["দারিয়াস", "সায়রাস দ্য গ্রেট", "জার্কসিস", "কাস্পার"], correct: 1 },
+            { question: "আয়ারল্যান্ডের প্রধানমন্ত্রীর বাসভবন কোনটি?", options: ["ডাবলিনের ক্যাসেল", "লেস্টার হাউস", "আর্দাঘ হাউজ", "হ্যামিলটন প্যালেস"], correct: 2 },
+            { question: "প্রাচীন গ্রীসে কোন শহরটি 'গণতন্ত্রের জন্মস্থান' হিসেবে পরিচিত?", options: ["স্পার্টা", "আলেকজান্দ্রিয়া", "এথেন্স", "থেবস"], correct: 2 },
+            { question: "ইতালির রাষ্ট্রপতির বাসভবন কোনটি?", options: ["পালাজো চিগি", "কুইরিনাল প্যালেস", "পালাজো মাদামা", "ক্যাস্তেল সান্ট'এঞ্জেলো"], correct: 1 },
+            { question: "কোন ব্রিটিশ রাজবংশটি সবচেয়ে দীর্ঘকাল শাসন করেছিল?", options: ["হাউস অফ উইন্ডসর", "হাউস অফ টিউডর", "হাউস অফ স্টুয়ার্ট", "হাউস অফ হ্যানোভার"], correct: 0 },
+            { question: "নেপালের প্রেসিডেন্টের বাসভবন কোনটি?", options: ["সিংহ দরবার", "নারায়ানহিতি প্রাসাদ", "শীতল নিবাস", "কাঠমান্ডু দরবার স্কোয়ার"], correct: 2 },
+            { question: "কোন প্রাচীন সভ্যতাটি 'প্রথম নগর পরিকল্পনা'র জন্য বিখ্যাত?", options: ["মিশরীয়", "রোমান", "ইনকা", "সিন্ধু উপত্যকা"], correct: 3 },
+            { question: "কোন দেশের রাষ্ট্রপ্রধানের বাসভবন 'কাসা রোসাডা' নামে পরিচিত?", options: ["পেরু", "আর্জেন্টিনা", "কলম্বিয়া", "চিলি"], correct: 1 },
+            { question: "'ক্যাম্প ডেভিড' কোন দেশের রাষ্ট্রপতির অবকাশ যাপনের স্থান?", options: ["মার্কিন যুক্তরাষ্ট্র", "কানাডা", "যুক্তরাজ্য", "ফ্রান্স"], correct: 0 },
+            { question: "কোন দেশের প্রেসিডেন্টের বাসভবন 'লা মোনেদা প্যালেস'?", options: ["পেরু", "বলিভিয়া", "চিলি", "ইকুয়েডর"], correct: 2 },
+            { question: "'আবাস লুইসিয়া' কোন দেশের প্রধানমন্ত্রীর বাসভবন?", options: ["ব্রাজিল", "পর্তুগাল", "স্পেন", "মেক্সিকো"], correct: 0 },
+            { question: "'জুকনিট্‌' কোন দেশের রাজপরিবারের গ্রীষ্মকালীন বাসস্থান?", options: ["নেদারল্যান্ডস", "সুইডেন", "ডেনমার্ক", "নরওয়ে"], correct: 1 }
+        ];
+
+        function loadQuiz() {
+            const quizDiv = document.getElementById('quiz');
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold mb-2">${index + 1}. ${q.question}</h3>
+                    ${q.options.map((option, i) => `
+                        <label class="option">
+                            <input type="radio" name="q${index}" value="${i}">
+                            ${option}
+                        </label>
+                    `).join('')}
+                `;
+                quizDiv.appendChild(questionDiv);
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            const resultDiv = document.getElementById('result');
+            const correctAnswersDiv = document.getElementById('correct-answers');
+            correctAnswersDiv.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const questionDiv = document.getElementsByClassName('question')[index];
+                const options = questionDiv.getElementsByClassName('option');
+
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                    options[q.correct].classList.add('correct');
+                } else {
+                    if (selected) {
+                        options[parseInt(selected.value)].classList.add('incorrect');
+                    }
+                    options[q.correct].classList.add('correct');
+                }
+
+                const answerDiv = document.createElement('div');
+                answerDiv.innerHTML = `<p><strong>${index + 1}. ${q.question}</strong><br>সঠিক উত্তর: ${q.options[q.correct]}</p>`;
+                correctAnswersDiv.appendChild(answerDiv);
+            });
+
+            document.getElementById('score').textContent = score;
+            resultDiv.style.display = 'block';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        loadQuiz();
+    </script>
+</body>
+</html>
